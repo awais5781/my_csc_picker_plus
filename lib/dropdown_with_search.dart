@@ -236,7 +236,7 @@ class _SearchDialogState<T> extends State<SearchDialog> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
-                autofocus: true,
+                autofocus: false,
                 decoration: InputDecoration(
                   isDense: true,
                   prefixIcon: const Icon(Icons.search),
