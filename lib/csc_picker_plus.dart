@@ -890,20 +890,25 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
       children: [
         widget.layout == Layout.vertical
             ? Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                         if (widget.stateLabelTitle != null)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6.0),
-          child: Text(
-            widget.countryLabelTitle!,
-            style: TextStyle(
-            color: widget.labelTitleColor ?? Colors.black,
-            fontSize: widget.labelTitleTextSize ?? 16,
-            fontWeight: widget.labelTitleWeight??FontWeight.w700,
-            ),
-          ),
-        ),
+                  Padding(
+  padding: const EdgeInsets.only(bottom: 6.0),
+  child: Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      widget.countryLabelTitle!,
+      textAlign: TextAlign.left,
+      style: TextStyle(
+        color: widget.labelTitleColor ?? Colors.black,
+        fontSize: widget.labelTitleTextSize ?? 16,
+        fontWeight: widget.labelTitleWeight ?? FontWeight.w700,
+      ),
+    ),
+  ),
+),
+
                   countryDropdown(),
                   widget.showStates
                       ? const SizedBox(height: 10.0)
