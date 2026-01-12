@@ -585,12 +585,12 @@ class CSCPickerPlus extends StatefulWidget {
     this.stateDropdownLabel = "State",
     this.cityDropdownLabel = "City",
     this.countryFilter,
-    this.countryLabelTitle;
-    this.stateLabelTitle;
-    this.cityLabelTitle;
-    this.labelTitleTextSize;
-    this.labelTitleWeight;
-    this.labelTitleColor;
+    this.countryLabelTitle,
+    this.stateLabelTitle,
+    this.cityLabelTitle,
+    this.labelTitleTextSize,
+    this.labelTitleWeight,
+    this.labelTitleColor,
   });
 
   final ValueChanged<String>? onCountryChanged;
