@@ -890,7 +890,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
       children: [
         widget.layout == Layout.vertical
             ? Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                         if (widget.stateLabelTitle != null)
         Padding(
@@ -980,6 +980,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
     return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+                          SizedBox(height: 8),
               if (widget.stateLabelTitle != null)
         Padding(
           padding: const EdgeInsets.only(bottom: 6.0),
@@ -1024,7 +1025,9 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
   ///City Dropdown Widget
   Widget cityDropdown() {
     return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+                                  SizedBox(height: 8),
               if (widget.cityLabelTitle != null)
         Padding(
           padding: const EdgeInsets.only(bottom: 6.0),
