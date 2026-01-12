@@ -364,7 +364,7 @@ class CustomDialog extends StatelessWidget {
             constraints: constraints,
             child: Material(
               elevation: 15.0,
-              color: _getColor(context),
+              color: Colors.white,
               type: MaterialType.card,
               shape: shape ?? dialogTheme.shape ?? _defaultDialogShape,
               child: child,
