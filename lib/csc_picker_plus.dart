@@ -992,7 +992,7 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
           state.didChange(value); // Updates validation state
         }
       },
-    );
+    ),
             if (state.hasError)
               Padding(
                 padding: const EdgeInsets.only(top: 5, left: 10),
