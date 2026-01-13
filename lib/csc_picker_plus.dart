@@ -591,6 +591,9 @@ class CSCPickerPlus extends StatefulWidget {
     this.labelTitleTextSize,
     this.labelTitleWeight,
     this.labelTitleColor,
+    this.countryValidator,
+    this.stateValidator,
+    this.cityValidator,
   });
 
   final ValueChanged<String>? onCountryChanged;
@@ -632,6 +635,10 @@ class CSCPickerPlus extends StatefulWidget {
   final double? labelTitleTextSize;
   final FontWeight? labelTitleWeight;
   final Color? labelTitleColor;
+
+  final String? Function(String?)? countryValidator;
+  final String? Function(String?)? stateValidator;
+  final String? Function(String?)? cityValidator;
 
   final List<CscCountry>? countryFilter;
 
@@ -950,7 +957,14 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
 
   ///Country Dropdown Widget
   Widget countryDropdown() {
-    return DropdownWithSearch(
+    return FormField<String>(
+      initialValue: _selectedCountry,
+      validator: widget.countryValidator,
+      builder: (FormFieldState<String> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownWithSearch(
       title: widget.countryDropdownLabel.tr(widget.countryStateLanguage),
       placeHolder:
           widget.countrySearchPlaceholder.tr(widget.countryStateLanguage),
@@ -975,99 +989,145 @@ class CSCPickerPlusState extends State<CSCPickerPlus> {
         log("countryChanged $value $_selectedCountry");
         if (value != null) {
           _onSelectedCountry(value);
+          state.didChange(value); // Updates validation state
         }
+      },
+    );
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 10),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              )
+          ],
+        );
       },
     );
   }
 
   ///State Dropdown Widget
   Widget stateDropdown() {
-    return Column(
+    return FormField<String>(
+      key: ValueKey(_selectedState), // Important to reset error when country changes
+      initialValue: _selectedState,
+      validator: widget.stateValidator,
+      builder: (FormFieldState<String> state) {
+        return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-                          SizedBox(height: 8),
-              if (widget.stateLabelTitle != null)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6.0),
-          child: Text(
-            widget.stateLabelTitle!,
-            style: TextStyle(
-            color: widget.labelTitleColor ?? Colors.black,
-            fontSize: widget.labelTitleTextSize ?? 16,
-            fontWeight: widget.labelTitleWeight??FontWeight.w700,
+          children: [
+            // Layout padding logic
+            if (widget.layout == Layout.vertical) SizedBox(height: 8),
+            if (widget.stateLabelTitle != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6.0),
+                child: Text(
+                  widget.stateLabelTitle!,
+                  style: TextStyle(
+                    color: widget.labelTitleColor ?? Colors.black,
+                    fontSize: widget.labelTitleTextSize ?? 16,
+                    fontWeight: widget.labelTitleWeight ?? FontWeight.w700,
+                  ),
+                ),
+              ),
+            DropdownWithSearch(
+              title: widget.stateDropdownLabel.tr(widget.countryStateLanguage),
+              placeHolder: widget.stateSearchPlaceholder.tr(widget.countryStateLanguage),
+              disabled: _statesModels.isEmpty ? true : false,
+              items: _statesModels.map((dropDownStringItem) => dropDownStringItem).toList(),
+              isArabic: widget.countryStateLanguage == CountryStateLanguage.arabic,
+              selectedItemStyle: widget.selectedItemStyle,
+              dropdownHeadingStyle: widget.dropdownHeadingStyle,
+              itemStyle: widget.dropdownItemStyle,
+              decoration: widget.dropdownDecoration,
+              dialogRadius: widget.dropdownDialogRadius,
+              searchBarRadius: widget.searchBarRadius,
+              disabledDecoration: widget.disabledDropdownDecoration,
+              selected: _selectedState,
+              label: widget.stateSearchPlaceholder.tr(widget.countryStateLanguage),
+              onChanged: (value) {
+                if (value != null) {
+                  _onSelectedState(value);
+                  state.didChange(value);
+                } else {
+                  _onSelectedState(_selectedState);
+                  state.didChange(_selectedState);
+                }
+              },
             ),
-          ),
-        ),
-      DropdownWithSearch(
-      title: widget.stateDropdownLabel.tr(widget.countryStateLanguage),
-      placeHolder:
-          widget.stateSearchPlaceholder.tr(widget.countryStateLanguage),
-      disabled: _statesModels.isEmpty ? true : false,
-      items: _statesModels.map((dropDownStringItem) {
-        return dropDownStringItem;
-      }).toList(),
-      isArabic: widget.countryStateLanguage == CountryStateLanguage.arabic,
-      selectedItemStyle: widget.selectedItemStyle,
-      dropdownHeadingStyle: widget.dropdownHeadingStyle,
-      itemStyle: widget.dropdownItemStyle,
-      decoration: widget.dropdownDecoration,
-      dialogRadius: widget.dropdownDialogRadius,
-      searchBarRadius: widget.searchBarRadius,
-      disabledDecoration: widget.disabledDropdownDecoration,
-      selected: _selectedState,
-      label: widget.stateSearchPlaceholder.tr(widget.countryStateLanguage),
-      //onChanged: (value) => _onSelectedState(value),
-      onChanged: (value) {
-        //print("stateChanged $value $_selectedState");
-        value != null
-            ? _onSelectedState(value)
-            : _onSelectedState(_selectedState);
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 10),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              )
+          ],
+        );
       },
-    )
-        ]);
+    );
   }
 
   ///City Dropdown Widget
   Widget cityDropdown() {
-    return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-                                  SizedBox(height: 8),
-              if (widget.cityLabelTitle != null)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 6.0),
-          child: Text(
-            widget.cityLabelTitle!,
-            style: TextStyle(
-            color: widget.labelTitleColor ?? Colors.black,
-            fontSize: widget.labelTitleTextSize ?? 16,
-            fontWeight: widget.labelTitleWeight??FontWeight.w700,
+    return FormField<String>(
+      key: ValueKey(_selectedCity),
+      initialValue: _selectedCity,
+      validator: widget.cityValidator,
+      builder: (FormFieldState<String> state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.layout == Layout.vertical) SizedBox(height: 8),
+            if (widget.cityLabelTitle != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6.0),
+                child: Text(
+                  widget.cityLabelTitle!,
+                  style: TextStyle(
+                    color: widget.labelTitleColor ?? Colors.black,
+                    fontSize: widget.labelTitleTextSize ?? 16,
+                    fontWeight: widget.labelTitleWeight ?? FontWeight.w700,
+                  ),
+                ),
+              ),
+            DropdownWithSearch(
+              title: widget.cityDropdownLabel.tr(widget.countryStateLanguage),
+              placeHolder: widget.citySearchPlaceholder.tr(widget.countryStateLanguage),
+              disabled: _cities.isEmpty ? true : false,
+              items: _cities.map((String? dropDownStringItem) => dropDownStringItem).toList(),
+              selectedItemStyle: widget.selectedItemStyle,
+              dropdownHeadingStyle: widget.dropdownHeadingStyle,
+              itemStyle: widget.dropdownItemStyle,
+              decoration: widget.dropdownDecoration,
+              dialogRadius: widget.dropdownDialogRadius,
+              searchBarRadius: widget.searchBarRadius,
+              disabledDecoration: widget.disabledDropdownDecoration,
+              selected: _selectedCity,
+              label: widget.citySearchPlaceholder.tr(widget.countryStateLanguage),
+              onChanged: (value) {
+                if (value != null) {
+                  _onSelectedCity(value);
+                  state.didChange(value);
+                } else {
+                  _onSelectedCity(_selectedCity);
+                  state.didChange(_selectedCity);
+                }
+              },
             ),
-          ),
-        ),
-      DropdownWithSearch(
-      title: widget.cityDropdownLabel.tr(widget.countryStateLanguage),
-      placeHolder: widget.citySearchPlaceholder.tr(widget.countryStateLanguage),
-      disabled: _cities.isEmpty ? true : false,
-      items: _cities.map((String? dropDownStringItem) {
-        return dropDownStringItem;
-      }).toList(),
-      selectedItemStyle: widget.selectedItemStyle,
-      dropdownHeadingStyle: widget.dropdownHeadingStyle,
-      itemStyle: widget.dropdownItemStyle,
-      decoration: widget.dropdownDecoration,
-      dialogRadius: widget.dropdownDialogRadius,
-      searchBarRadius: widget.searchBarRadius,
-      disabledDecoration: widget.disabledDropdownDecoration,
-      selected: _selectedCity,
-      label: widget.citySearchPlaceholder.tr(widget.countryStateLanguage),
-      //onChanged: (value) => _onSelectedCity(value),
-      onChanged: (value) {
-        //print("cityChanged $value $_selectedCity");
-        value != null ? _onSelectedCity(value) : _onSelectedCity(_selectedCity);
+            if (state.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 10),
+                child: Text(
+                  state.errorText!,
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              )
+          ],
+        );
       },
-    )
-      ]
     );
   }
 }
